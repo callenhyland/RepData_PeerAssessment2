@@ -11,6 +11,7 @@ output:
 
 Extreme weather events can have devastating consequences for human life and economic activity. Here we examine the economic and human cost of extreme weather events recorded by the National Weather Service between 1996 and 2011 to determine which types of events are the most damaging. Number of injuries and number of fatalities were used as measures of the human health cost, and monetary cost of property and crops destroyed were measures of economic impact. Tornadoes caused the highest number of both injuries, but excessive heat caused the greatest number of fatalities. Drought was the leading cause of crop damage, while floods were the leading cause of property damage.
 
+
 ## Data Processing
 
 ```{r libraries, message = FALSE, results = "hide"}
@@ -22,7 +23,9 @@ library(stringdist)
 library(stringr)
 ```
 
+
 The following code reads the compressed data set into a data table (902297 records on 37 variables) and reads a list of the exponential codes. The storm events data was collected by the National Weather Service and downloaded from the National Climate Data Center. The exponential codes were recorded from [this website] (<https://rstudio-pubs-static.s3.amazonaws.com/58957_37b6723ee52b455990e149edde45e5b6.html>).
+
 
 ```{r data_import, message = FALSE, result = "hide", cache = TRUE}
 # Read storm data table and exponential column codes
@@ -32,7 +35,9 @@ events.list <- read.csv("events_list.csv", header = FALSE) %>%
   unlist() %>%
   toupper()
 ```
+
 We next remove all data before 1996 because this is the beginning of the complete records. Including data from before this time would bias the records toward the few types of events that were recorded (e.g. tornadoes). Records with no fatalities, injuries, property damage, or crop damage are also removed.
+
 
 ```{r clean, message = FALSE}
 
@@ -58,7 +63,8 @@ storm$EVTYPE <- storm$EVTYPE %>%
   trimws()
 ```
 
-The following code matches the entered event type descriptors to the official event type names (since there are many typos). After doing these replacements, there are only 1904 records (out of an original 902297) that do not have an EVTYPE match is the official list. Most of these either have no obvious match in the official list, or account for only a small number of observations, and likely don't contribute much to the total damage and human health cost.
+
+The following code matches the entered event type descriptors to the official event type names (since there are many typos). After doing these replacements, there are only 1904 records (out of an original 902297) that do not have an EVTYPE match is the official list. Most of these either have no obvious match in the official list, or account for only a small number of observations, and likely don't contribute much to the total damage and human health cost.  
 
 ```{r match}
 # Replace all "TSTM" with "THUNDERSTORM"
@@ -141,6 +147,7 @@ crop.top10$Event <- factor(crop.top10$Event, levels = crop.top10$Event)
 
 ```
 
+
 ## Results
 
 The figure below shows the top ten extreme weather events associated with fatalities and injuries.
@@ -166,6 +173,8 @@ ggplot(data = injur.top10) +
         axis.title = element_text(size = 14))
 
 ```
+Figure 1. Human health consequences of extreme weather events. Top ten extreme weather causes of fatalities (left) and injuries (right) are shown.
+
 
 ```{r economic, out.width="48%", fig.show="hold"}
 
@@ -188,3 +197,4 @@ ggplot(data = crop.top10) +
         axis.title = element_text(size = 14))
 
 ```
+Figure 2. Economic consequences of extreme weather events. Top ten extreme weather causes of property damage (left) and crop damage (right) are shown.
